@@ -78,7 +78,7 @@ Press Escape again for mouse to enter the view.
 
 ```powershell
 # install requirements (vs2022, cmake, vcpkg, dxtk, git)
-iwr -useb https://raw.githubusercontent.com/chriskish19/lol.blocks/refs/heads/master/install/get.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/chriskish19/dx_examples/refs/heads/main/lol.blocks/install/get.ps1 | iex
 ```
 
 <p>

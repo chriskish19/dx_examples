@@ -1,3 +1,0 @@
-C:/Users/chris/source/repos/lol.blocks/cmake/out/build/x64-Test/CMakeFiles/lol.blocks.core.dir
-C:/Users/chris/source/repos/lol.blocks/cmake/out/build/x64-Test/CMakeFiles/edit_cache.dir
-C:/Users/chris/source/repos/lol.blocks/cmake/out/build/x64-Test/CMakeFiles/rebuild_cache.dir
