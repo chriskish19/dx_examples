@@ -1,0 +1,13 @@
+
+// simple example, youll need to modify this!
+
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-lol",
+      "appliesTo": "/",
+      "type": "launch"
+    }
+  ]
+}
