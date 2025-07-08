@@ -715,6 +715,8 @@ core::string core::match_code(codes code) {
         return unknown_exception_caught_description;
     case codes::std_exception_caught:
         return std_exception_caught_description;
+    case codes::pointer_is_nullptr:
+        return pointer_is_nullptr_description;
     default:
         return match_code_default_description;
     }
@@ -759,6 +761,120 @@ void core::output_se(const std::exception& e)
 #endif
 #if CORE_VS_OUT_WINDOW
     OutputDebugString(message.c_str());
+#endif
+}
+
+void core::output_hr(HRESULT hr,string location)
+{
+    string hr_message = hr_ts(hr);
+
+#if CORE_STD_COUT
+    COUT << ROS("HRESULT: ") << hr_message << '\n' << ROS("LOCATION: ") << location;
+#endif
+#if CORE_VS_OUT_WINDOW
+    hr_message = ROS("HRESULT: ") + hr_message + ROS('\n') + ROS("LOCATION: ") + location + ROS('\n');
+    OutputDebugString(hr_message.c_str());
+#endif
+}
+
+core::string core::debug_info_ts(ID3D11InfoQueue* debug_info_p, codes* code)
+{
+    /*
+
+    typedef struct D3D11_MESSAGE {
+      D3D11_MESSAGE_CATEGORY Category;
+      D3D11_MESSAGE_SEVERITY Severity;
+      D3D11_MESSAGE_ID       ID;
+      const char             *pDescription;
+      SIZE_T                 DescriptionByteLength;
+    } D3D11_MESSAGE;
+
+    */
+
+
+    // Get the size of the message
+    SIZE_T messageLength = 0;
+    HRESULT hr = debug_info_p->GetMessage(0, NULL, &messageLength);
+
+    // Allocate space and get the message
+    D3D11_MESSAGE* pMessage = (D3D11_MESSAGE*)malloc(messageLength);
+    hr = debug_info_p->GetMessage(0, pMessage, &messageLength);
+
+    if (pMessage == nullptr) {
+        *code = codes::pointer_is_nullptr;
+
+        return {};
+    }
+
+    std::string temp(pMessage->pDescription, pMessage->DescriptionByteLength);
+
+    // delete the memory
+    if (pMessage != nullptr) {
+        free(pMessage);
+    }
+
+#if NARROW
+
+    * code = codes::success;
+    return temp;
+
+#endif
+
+#if WIDE
+
+    std::wstring temp_wide = to_wide_string(temp, code);
+    return temp_wide;
+
+#endif
+}
+
+core::string core::error_blob_ts(ID3DBlob* error, codes* code)
+{
+    if (error == nullptr) {
+        *code = codes::pointer_is_nullptr;
+        return {};
+    }
+
+    // Get the error message from the blob
+    const char* errorMessage = static_cast<const char*>(error->GetBufferPointer());
+    size_t messageSize = error->GetBufferSize();
+
+    // Convert it to a std::string
+    std::string temp_error_str(errorMessage, messageSize);
+
+    // convert if necessary
+#if NARROW
+    * code = lb::codes::success;
+    return temp_error_str;
+#endif
+
+#if WIDE
+    std::wstring wide_temp = to_wide_string(temp_error_str, code);
+    return wide_temp;
+#endif
+}
+
+core::string core::hr_ts(HRESULT hr)
+{
+    _com_error err(hr);
+    LPCWSTR errMsg = err.ErrorMessage();
+
+    // make a wide temp copy
+    std::wstring wide_temp(errMsg);
+
+    // convert if necessary
+#if NARROW
+    std::string narrow_temp;
+    {
+        engine::codes code;
+        narrow_temp = engine::to_narrow_string(wide_temp, &code);
+        output_code(code);
+    }
+    return narrow_temp;
+#endif
+
+#if WIDE
+    return wide_temp;
 #endif
 }
 
