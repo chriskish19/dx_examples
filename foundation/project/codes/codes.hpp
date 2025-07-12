@@ -23,5 +23,6 @@ namespace core {
 		get_client_rect_fail,
 		unknown_exception_caught,
 		std_exception_caught,
+		pointer_is_nullptr,
 	};
 }

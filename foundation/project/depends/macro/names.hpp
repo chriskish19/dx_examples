@@ -18,6 +18,8 @@
 
 // classes
 #define WINDOW_CLASS_INCLUDE_PATH										window_classes_hpp
+#define DX11SETUP_INCLUDE_PATH											sdx11_hpp
+#define DX11CAM_INCLUDE_PATH											dx11_camera_hpp
 
 // codes
 #define CODES_INCLUDE_PATH												codes_hpp
